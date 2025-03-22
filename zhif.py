@@ -29,4 +29,5 @@ def save(input_path: Path, output_path: Path):
 
 
 if __name__ == "__main__":
+    functions.set_cmd_font()
     main()

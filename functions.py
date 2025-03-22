@@ -6,6 +6,8 @@ import colorama
 from sys import exit
 from time import sleep
 from pathlib import Path
+from os import system, devnull
+from pynput.keyboard import Key, Listener
 
 colorama.init()
 RD = colorama.Fore.RED
@@ -23,6 +25,14 @@ logging.basicConfig(
 )
 
 DELAY = 0.1
+END = False  # 不能用常规方法退出，会被键盘监听阻塞
+
+
+def set_cmd_font() -> None:
+    """设置命令行字体"""
+
+    system("mode con: cols=50 lines=30")
+    system(f"chcp 65001 > {devnull}")
 
 
 def load_zhif(path: Path) -> str:
@@ -55,15 +65,38 @@ def save_zhif(input_path: Path, output_path: Path) -> None:
     output_path.write_bytes(data)
 
 
+def wait_next(key) -> None:
+    """等待键盘输入"""
+
+    if key == Key.esc:
+        end_game()
+    elif key == Key.space or key == Key.enter:
+        print()
+        return False  # 返回 False 停止监听
+    else:
+        return True
+
+
+def end_game() -> None:
+    """退出游戏"""
+
+    global END
+    print(f"\n{R}运行已结束，按任意键退出...")
+    with Listener(on_press=lambda _: False) as listener:
+        listener.join()
+    END = True
+
+
 def typewrite(text: str, end: bool = True) -> None:
     """打字机效果输出"""
 
     for char in text:
         print(char, end="", flush=True)
         sleep(DELAY)
-    sleep(0.1)
     if end:
-        input()
+        sleep(0.1)
+        with Listener(on_press=wait_next) as listener:
+            listener.join()  # 直接等待直到监听停止
 
 
 def parse_color(color: str) -> str:
@@ -94,6 +127,8 @@ def parse(line: str) -> None:
     """解析单行"""
 
     global DELAY
+    if END:
+        exit(0)
 
     # * 此时的 line: str
     # 检查是不是没写完一行
@@ -127,7 +162,6 @@ def parse(line: str) -> None:
             sleep(float(time))
         # 结束
         case ["end"]:
-            input("运行已结束，按 回车键 退出...")
-            exit(0)
+            end_game()
         case _:
             logging.error(f"无效语句：{line}")
