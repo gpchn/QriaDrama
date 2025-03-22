@@ -1,5 +1,7 @@
 # coding=utf-8
 
+# ! 连续不换行（default.txt 17~19）不正常
+
 import pyzstd
 import logging
 import colorama
@@ -8,6 +10,10 @@ from time import sleep
 from pathlib import Path
 from os import system, devnull
 from pynput.keyboard import Key, Listener
+
+# 设置终端样式
+system("mode con: cols=50 lines=30")  # 设置行列
+system(f"chcp 65001 > {devnull}")  # 设置编码为 UTF-8
 
 colorama.init()
 # 前景色
@@ -64,8 +70,9 @@ logging.basicConfig(
     format=f"[{FRD}%(levelname)s{R}] %(funcName)s: {FRD}{B}%(message)s{R}",
 )
 
-DELAY = 0.1
-END = False  # 不能用常规方法退出，会被键盘监听阻塞
+DELAY: float = 0.1
+END: bool = False  # 不能用常规方法退出，会被键盘监听阻塞
+EXTRA_LINE: int = 0
 
 
 def reset_color() -> None:
@@ -89,13 +96,6 @@ reset_color()
 def _print(text: str = "", end: str = "\n") -> None:
     """自定义的 print 函数"""
     print(f"{FORE}{BACK}{STYLE}{text}{R}", end=end, flush=True)
-
-
-def set_cmd_font() -> None:
-    """设置命令行字体"""
-
-    system("mode con: cols=50 lines=30")
-    system(f"chcp 65001 > {devnull}")
 
 
 def load_zhif(path: Path) -> str:
@@ -134,7 +134,7 @@ def wait_next(key) -> None:
     if key == Key.esc:
         end_game()
     elif key == Key.space or key == Key.enter:
-        print()
+        _print()
         return False  # 返回 False 停止监听
     else:
         return True
@@ -160,6 +160,8 @@ def typewrite(text: str, end: bool = True) -> None:
         _print(CONTINUE_PROMPT, "")
         with Listener(on_press=wait_next) as listener:
             listener.join()  # 直接等待直到监听停止
+    if EXTRA_LINE:
+        _print("\n" * EXTRA_LINE, "")
 
 
 def parse_color(color: str, type: str = "fore") -> str:
@@ -245,7 +247,7 @@ def parse_color(color: str, type: str = "fore") -> str:
 def parse(line: str) -> None:
     """解析单行"""
 
-    global DELAY, FORE, BACK, STYLE
+    global DELAY, FORE, BACK, STYLE, EXTRA_LINE
     if END:
         exit(0)
 
@@ -296,10 +298,25 @@ def parse(line: str) -> None:
             _print("", "")
         # 设置样式
         case ["color", "style", str() as style]:
-            STYLE = parse_style(style)
+            STYLE = parse_color(style, "style")
+            _print("", "")
         # 重置所有
         case ["color", "reset"]:
             reset_color()
+        # 省略号
+        case ["..."]:
+            temp = EXTRA_LINE
+            EXTRA_LINE += 1
+            typewrite("\n... ...")
+            EXTRA_LINE = temp
+        # 链接
+        case ["link", str() as url]:
+            temp = (FORE, BACK, STYLE)
+            FORE = FLBL
+            BACK = BBK
+            STYLE = N
+            typewrite(url, end)
+            FORE, BACK, STYLE = temp
         # 等待几秒
         case ["sleep", str() as time]:
             sleep(float(time))
