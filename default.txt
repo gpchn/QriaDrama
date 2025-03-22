@@ -8,18 +8,16 @@ zhif 是一个供教学使用的 IF（互动小说）解释器，正在积极开
 
 /...
 
-/color fore green
 简单的教程：
 1. 当末尾出现 “·” 时，按 空格键 或 回车键 继续
 2. 如果想退出，请按 \
-/link Esc\
+/bold Esc\
 （其实 Ctrl+C 也行）
 3. 如果出现 bug，烦请在 GitHub 上 提交 issue，或发送邮件至 \
 /link zhif@252123.xyz
 更多信息请查看 README.md（\
 /link https://github.com/gpchn/zhif/README.md\
 ）
-/color reset
 /delay 0.05
 /sleep 1
 

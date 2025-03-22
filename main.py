@@ -317,6 +317,12 @@ def parse(line: str) -> None:
             STYLE = N
             typewrite(url, end)
             FORE, BACK, STYLE = temp
+        # 加粗
+        case ["bold", str() as text]:
+            temp = STYLE
+            STYLE = B
+            typewrite(text, end)
+            STYLE = temp
         # 等待几秒
         case ["sleep", str() as time]:
             sleep(float(time))
