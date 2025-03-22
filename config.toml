@@ -1,0 +1,7 @@
+[console]
+cols = 50
+lines = 30
+
+[game]
+delay = 0.05
+extra_line = 0

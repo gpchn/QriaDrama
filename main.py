@@ -4,6 +4,7 @@
 
 import pyzstd
 import logging
+import tomllib
 import colorama
 from sys import exit
 from time import sleep
@@ -11,9 +12,6 @@ from pathlib import Path
 from os import system, devnull
 from pynput.keyboard import Key, Listener
 
-# 设置终端样式
-system("mode con: cols=50 lines=30")  # 设置行列
-system(f"chcp 65001 > {devnull}")  # 设置编码为 UTF-8
 
 colorama.init()
 # 前景色
@@ -70,9 +68,22 @@ logging.basicConfig(
     format=f"[{FRD}%(levelname)s{R}] %(funcName)s: {FRD}{B}%(message)s{R}",
 )
 
-DELAY: float = 0.1
+# 加载配置
+config_path = Path("style.toml")
+if config_path.exists():
+    CFG = tomllib.loads(config_path.read_text("utf-8"))
+else:
+    logging.error(f"配置文件不存在，请创建 {config_path.absolute()}")
+    input()
+    exit(1)
+
+# 设置终端样式
+system(f"mode con: cols={CFG["console"]["cols"]} lines={CFG["console"]["lines"]}")  # 设置行列
+system(f"chcp 65001 > {devnull}")  # 设置编码为 UTF-8
+
+DELAY: float = CFG["console"]["delay"]
+EXTRA_LINE: int = CFG["console"]["extra_line"]
 END: bool = False  # 不能用常规方法退出，会被键盘监听阻塞
-EXTRA_LINE: int = 0
 
 
 def reset_color() -> None:
