@@ -1,6 +1,5 @@
 /delay 0.01
-/color blue
-/color bright
+/color fore lightblue
 欢迎试玩 吉吉（Lucky）
 （测试版，仅供 zhif 程序测试使用，github.com/gpchn/zhif）
 /color reset
