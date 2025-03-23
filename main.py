@@ -1,6 +1,7 @@
 # coding=utf-8
 
 # ! 连续不换行（default.txt 17~19）不正常
+# * 添加选项功能，真正成为互动小说
 
 import pyzstd
 import logging
@@ -334,6 +335,8 @@ def parse(line: str) -> None:
             STYLE = B
             typewrite(text, end)
             STYLE = temp
+        # 选项
+        # * 待开发
         # 等待几秒
         case ["sleep", str() as time]:
             sleep(float(time))
