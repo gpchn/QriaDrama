@@ -69,7 +69,7 @@ logging.basicConfig(
 )
 
 # 加载配置
-config_path = Path("style.toml")
+config_path = Path("config.toml")
 if config_path.exists():
     CFG = tomllib.loads(config_path.read_text("utf-8"))
 else:
@@ -81,8 +81,8 @@ else:
 system(f"mode con: cols={CFG["console"]["cols"]} lines={CFG["console"]["lines"]}")  # 设置行列
 system(f"chcp 65001 > {devnull}")  # 设置编码为 UTF-8
 
-DELAY: float = CFG["console"]["delay"]
-EXTRA_LINE: int = CFG["console"]["extra_line"]
+DELAY: float = CFG["game"]["delay"]
+EXTRA_LINE: int = CFG["game"]["extra_line"]
 END: bool = False  # 不能用常规方法退出，会被键盘监听阻塞
 
 
