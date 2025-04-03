@@ -1,16 +1,21 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 # ! 连续不换行（default.txt 17~19）不正常
-# * 添加选项功能，真正成为互动小说
+
+
+"""导包 + 定义常量 + 初始化"""
 
 import pyzstd
+import tarfile
 import logging
 import tomllib
 import colorama
-from sys import exit
+from io import BytesIO
 from time import sleep
 from pathlib import Path
 from os import system, devnull
+from sys import exit, platform
 from pynput.keyboard import Key, Listener
 
 
@@ -70,7 +75,7 @@ logging.basicConfig(
 )
 
 # 加载配置
-config_path = Path("config.toml")
+config_path = Path(__file__).parent / Path("config.toml")
 if config_path.exists():
     CFG = tomllib.loads(config_path.read_text("utf-8"))
 else:
@@ -78,10 +83,7 @@ else:
     input()
     exit(1)
 
-# 设置终端样式
-system(f"mode con: cols={CFG["console"]["cols"]} lines={CFG["console"]["lines"]}")  # 设置行列
-system(f"chcp 65001 > {devnull}")  # 设置编码为 UTF-8
-
+ZSTD_LEVEL = CFG["io"]["zstd_level"]
 DELAY: float = CFG["game"]["delay"]
 EXTRA_LINE: int = CFG["game"]["extra_line"]
 END: bool = False  # 不能用常规方法退出，会被键盘监听阻塞
@@ -110,34 +112,65 @@ def _print(text: str = "", end: str = "\n") -> None:
     print(f"{FORE}{BACK}{STYLE}{text}{R}", end=end, flush=True)
 
 
-def load_zhif(path: Path) -> str:
-    """加载 zhif 文件"""
+""" 文件操作 """
 
-    if not path.suffix == ".zhif":
-        path = path.with_suffix(".zhif")
+
+def release_zhifpkg(pkg_path: Path, output: Path) -> None:
+    """发布 .zhifpkg 包"""
+
+    # 检查是否是文件夹
+    pkg_path.is_dir() or logging.error(f"应提供文件夹：{pkg_path}") or exit(1)
+    buffer = BytesIO()  # 创建虚拟 buffer
+    tarfile.open(fileobj=buffer, mode="w").add(pkg_path)  # 将文件夹打包
+    output.write_bytes(pyzstd.compress(buffer.getvalue(), ZSTD_LEVEL))  # 压缩并写入文件
+
+
+def extract_zhifpkg(pkg_path: Path, output: Path) -> None:
+    """提取 .zhifpkg 包"""
+
+    if not pkg_path.suffix == ".zhifpkg":
+        pkg_path = pkg_path.with_suffix(".zhifpkg")
 
     # 检查文件是否存在
-    path.exists() or logging.error(f"文件不存在：{path}") or exit(1)
-    data = path.read_bytes()
-
-    # 尝试解压文件
-    try:
-        data = pyzstd.decompress(data)
-        data = data.decode("utf-8")
-    except Exception as e:
-        logging.error(e)
-        exit(1)
-
-    return data
+    pkg_path.exists() or logging.error(f"文件不存在：{pkg_path}") or exit(1)
+    pwd = (
+        output if output else pkg_path.parent
+    )  # 如果未指定输出路径，则使用文件所在目录
+    buffer = BytesIO(pyzstd.decompress(pkg_path.read_bytes()))  # zstd 解压文件
+    tarfile.open(fileobj=buffer, mode="r").extractall(pwd)  # tar 解压到指定目录
 
 
-def save_zhif(input_path: Path, output_path: Path) -> None:
-    """保存为 zhif 文件"""
+def load_zhifpkg(pkg_path: Path) -> None:
+    """加载 .zhifpkg 包"""
 
-    # 将数据写入文件
-    data = input_path.read_text("utf-8").encode("utf-8")
-    data = pyzstd.compress(data)
-    output_path.write_bytes(data)
+    # 检查是否是文件夹
+    pkg_path.is_dir() or logging.error(f"应提供文件夹：{pkg_path}") or exit(1)
+    # 读取配置文件
+    game_config_path = pkg_path / "game.toml"
+    game_config_path.exists() or logging.error(
+        f"文件不存在：{game_config_path}"
+    ) or exit(1)
+    game_config = tomllib.loads(game_config_path.read_text("utf-8"))
+    # 入口文件
+    index = Path(game_config.get("index"))
+    load_zhif(index)
+
+
+def load_zhif(zhif_path: Path) -> None:
+    """加载 .zhif 脚本"""
+
+    if not zhif_path.suffix == ".zhif":
+        zhif_path = zhif_path.with_suffix(".zhif")
+
+    # 检查文件是否存在
+    zhif_path.exists() or logging.error(f"文件不存在：{zhif_path}") or exit(1)
+    # 读取并开始解析
+    lines = zhif_path.read_text("utf-8").splitlines()
+    for line in lines:
+        parse(line)
+
+
+""" zhif 语言解释器 """
 
 
 def wait_next(key) -> None:
@@ -330,13 +363,11 @@ def parse(line: str) -> None:
             typewrite(url, end)
             FORE, BACK, STYLE = temp
         # 加粗
-        case ["bold", str() as text]:
+        case ["hl" | "highlight", str() as text]:
             temp = STYLE
             STYLE = B
             typewrite(text, end)
             STYLE = temp
-        # 选项
-        # * 待开发
         # 等待几秒
         case ["sleep", str() as time]:
             sleep(float(time))
