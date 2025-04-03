@@ -4,8 +4,6 @@
 # ! 连续不换行（default.txt 17~19）不正常
 
 
-"""导包 + 定义常量 + 初始化"""
-
 import pyzstd
 import tarfile
 import logging
