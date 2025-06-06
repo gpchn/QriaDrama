@@ -1,1 +1,0 @@
-@..\zhif.py load .
