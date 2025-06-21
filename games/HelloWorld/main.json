@@ -1,0 +1,15 @@
+{
+  "name": "HelloWorld",
+  "description": "Example project",
+  "version": "0.1.0",
+  "author": "gpchn",
+  "license": null,
+
+  "index": "scripts/1.json",
+  "roles": "roles.json",
+  "default-style": {
+    "font": ["微软雅黑", 20],
+    "bg": "#111111",
+    "fg": "#777797"
+  }
+}
