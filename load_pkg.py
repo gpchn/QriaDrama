@@ -22,13 +22,13 @@ def main():
     elif not path.is_file():
         showerror("错误", f"路径 {path.absolute()} 必须是一个文件！")
         raise FileNotFoundError(f"Path {path.absolute()} is not a file!")
-    elif path.suffix != ".zhifpkg":
-        showwarning("警告", f"文件 {path.absolute()} 不是 zhifpkg 文件！")
+    elif path.suffix != ".qdpkg":
+        showwarning("警告", f"文件 {path.absolute()} 不是 qdpkg 文件！")
 
     # 读取压缩包
     with ZipFile(path, "r") as pkg:
         # 读取配置文件
-        with pkg.open("main.json.zhif") as f:
+        with pkg.open("main.json.qd") as f:
             pkg_data = f.read()
         pkg_data = loads(pkg_data)
         # 读取包名

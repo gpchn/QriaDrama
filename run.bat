@@ -1,1 +1,1 @@
-uv run zhif.py
+uv run qd.py

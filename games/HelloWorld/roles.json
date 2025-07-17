@@ -1,5 +1,5 @@
 {
     "gpchn": {
-        "color": "blue"
+        "format": "PS C:\\Users\\gpchn> echo $msg\n{text}"
     }
 }

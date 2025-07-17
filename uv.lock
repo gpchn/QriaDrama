@@ -41,7 +41,7 @@ wheels = [
 ]
 
 [[package]]
-name = "zhif"
+name = "qriadrama"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
