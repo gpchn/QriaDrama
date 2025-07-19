@@ -5,12 +5,12 @@ from os import _exit
 from pathlib import Path
 from orjson import loads
 from tkinter import Tk, Label, Button
+from pygame import mixer
 from tkinter.messagebox import showinfo, showwarning, showerror
-
 import gui
 
 GAME_PATH = Path(__file__).parent / "games"
-
+mixer.init()
 
 def main() -> None:
     # 搜索游戏
@@ -20,7 +20,7 @@ def main() -> None:
     main_window.title("QriaDrama")
     main_window.geometry("300x400")
     main_window.resizable(False, False)
-    main_window.iconbitmap("icon.ico")
+    main_window.iconbitmap("QriaDrama.ico")
 
     # 如果没有游戏
     if len(games) == 0:
@@ -69,8 +69,12 @@ def load_game(name: str) -> None:
     metadata = loads(metadata_file.read_text(encoding="utf-8"))
     style = metadata.get("default-style") or {}
 
-    g = gui.GUI(style)
+    g = gui.GUI(metadata.get("name"), style)
     i = Interpreter(root, metadata, g)
+
+    if metadata.get("bgm"):
+        mixer.music.load(str(root / metadata["bgm"]))
+        mixer.music.play()
 
     # 循环检测阻塞是否解除
     def loop():

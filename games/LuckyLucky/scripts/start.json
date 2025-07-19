@@ -1,7 +1,20 @@
 {
-    "lines": [
-        "Lucky Lucky - A story written by gpchn",
-        "感谢吉吉的友情出演",
-        "... ..."
-    ]
+  "lines": [
+    "Lucky Lucky - A story written by gpchn",
+    "感谢吉吉的友情出演",
+    "... ... ",
+    "* 暑假前的最后一下午 *",
+    {
+      "role": "吉吉",
+      "text": "（坐在空教室里）"
+    },
+    {
+      "role": "吉吉",
+      "text": "好热啊！"
+    },
+    {
+      "role": "胖虎",
+      "text": "谁说不是呢"
+    }
+  ]
 }

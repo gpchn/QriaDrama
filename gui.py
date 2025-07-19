@@ -14,19 +14,23 @@ class GUI:
     QriaDrama 默认 GUI 前端，使用 tkinter 实现
 
     Args:
+        name (str): 项目名称
         default_style (dict): 默认样式
     """
 
-    def __init__(self, default_style: dict):
+    def __init__(self, name:str, default_style: dict) -> None:
         font = default_style.get("font") or ("微软雅黑", 14)
         fg = default_style.get("fg", "#000000")
         bg = default_style.get("bg", "#ffffff")
+        window_name = default_style.get("window_name", name)
+        window_size = default_style.get("window_size", "800x600")
+        icon = default_style.get("icon", "QriaDrama.ico")
 
         self.root = tkinter.Tk()
-        self.root.title("QriaDrama")  # 设置窗口标题
+        self.root.title(window_name)  # 设置窗口标题
         self.root.resizable(False, False)  # 设置窗口大小不可变
-        self.root.geometry("800x600")  # 设置窗口大小
-        self.root.iconbitmap("icon.ico")  # 设置窗口图标
+        self.root.geometry(window_size)  # 设置窗口大小
+        self.root.iconbitmap(icon)  # 设置窗口图标
         # 绑定按键
         self.root.bind("<Return>", self._next)  # 绑定回车键
         self.root.bind("<space>", self._next)  # 绑定空格键
@@ -46,11 +50,14 @@ class GUI:
 
         # 设置文本框
         self.st = tkinter.scrolledtext.ScrolledText(self.root, width=400, height=600)
-        fg = self.handle_color(fg)
-        bg = self.handle_color(bg)
-        self.st.configure(font=font, bg=bg, fg=fg, state=tkinter.DISABLED)
+        self.fg = self.handle_color(fg)
+        self.bg = self.handle_color(bg)
+        self.st.configure(font=font, bg=self.bg, fg=self.fg, state=tkinter.DISABLED)
         self.st.pack()  # 放置文本框
         self.st.focus_set()  # 获取焦点
+
+        # 根据前景色和背景色自动计算点的颜色
+        self.calc_dot_color()
         # 初始化允许输出下一行的标志
         self.need_next: bool = False
 
@@ -87,6 +94,36 @@ GitHub：https://github.com/gpchn/QriaDrama
 3. 按 ESC 键可以退出""",
         )
 
+    def calc_dot_color(self) -> None:
+        """
+        计算点的颜色，储存在 self.dot_color
+
+
+        Args:
+            fg (str): 前景色
+            bg (str): 背景色
+        """
+
+        # 解析颜色为RGB值
+        def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
+            hex_color = (
+                hex_color.replace("fg_#", "").replace("bg_#", "").replace("#", "")
+            )
+            return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))  # type: ignore
+
+        # 获取前景色和背景色的RGB值
+        fg_rgb = hex_to_rgb(self.fg)
+        bg_rgb = hex_to_rgb(self.bg)
+
+        # 加权平均计算点的颜色（80%背景色，20%前景色）
+        dot_r = int(bg_rgb[0] * 0.7 + fg_rgb[0] * 0.3)
+        dot_g = int(bg_rgb[1] * 0.7 + fg_rgb[1] * 0.3)
+        dot_b = int(bg_rgb[2] * 0.7 + fg_rgb[2] * 0.3)
+
+        # 转换为十六进制格式
+        self.dot_color = f"#{dot_r:02x}{dot_g:02x}{dot_b:02x}"
+        self.handle_color(self.dot_color)
+
     def handle_color(self, color: str) -> str:
         """
         处理颜色
@@ -95,7 +132,7 @@ GitHub：https://github.com/gpchn/QriaDrama
             color (str): 要使用的颜色
 
         Returns:
-            str: 处理后的颜色
+            str: 处理后的颜色（十六进制）
         """
 
         # RGB 颜色转十六进制
@@ -147,7 +184,7 @@ GitHub：https://github.com/gpchn/QriaDrama
             self.st.insert(tkinter.END, char, color)
             self.st.update_idletasks()  # 刷新
             sleep(delay)
-        self.st.insert(tkinter.END, " ·\n", "gray")
+        self.st.insert(tkinter.END, " ·\n", self.dot_color)
         self.st.update_idletasks()
         self.st.config(state=tkinter.DISABLED)
         self.st.see(tkinter.END)

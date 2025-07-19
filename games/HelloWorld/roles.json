@@ -1,5 +1,5 @@
 {
-    "gpchn": {
-        "format": "PS C:\\Users\\gpchn> echo $msg\n{text}"
-    }
+  "gpchn": {
+    "format": "PS C:\\Users\\gpchn> echo $msg\n{text}"
+  }
 }

@@ -10,8 +10,14 @@ from tkinter.messagebox import showinfo, showwarning, showerror
 
 def main():
     if len(argv) < 2:
-        showerror("错误", "请输入一个文件路径！")
+        print("请输入一个文件路径！")
+        showerror("QriaDrama Package Importer", "请输入一个qdpkg文件路径！")
         raise ValueError("No file path provided!")
+    elif argv[1] == "-h" or argv[1] == "--help":
+        print(f"""Usage:
+    {argv[0]} <file_path>
+    输入一个 qdpkg 文件路径，就可以自动导入。""")
+        return
     path = Path(argv[1])
     save_path = Path(__file__).parent / "games"
 
@@ -35,7 +41,7 @@ def main():
         pkg_author = pkg_data["author"]
         pkg_name = pkg_data["name"]
         # 解压所有内容
-        pkg.extractall(path=save_path / f"{pkg_author}_{pkg_name}")
+        pkg.extractall(path=save_path / f"{pkg_name}_{pkg_author}")
 
     # 提示用户
     showinfo(f"导入成功！数据已储存在 {path.parent}")

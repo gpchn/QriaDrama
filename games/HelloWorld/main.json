@@ -5,12 +5,12 @@
   "author": "gpchn",
   "license": null,
 
-  "index": "scripts/1.json",
+  "index": "scripts/hello.json",
   "roles": "roles.json",
   "default-style": {
     "font": ["Consolas", 15],
     "bg": "#012456",
     "fg": "#CCCCCC",
-    "delay": 0.01
+    "delay": 0.02
   }
 }

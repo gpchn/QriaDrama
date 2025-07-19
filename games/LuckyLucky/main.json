@@ -9,6 +9,8 @@
   "roles": "roles.json",
   "default-style": {
     "font": ["微软雅黑", 20],
-    "fg": "rgb(0, 0, 0)"
-  }
+    "fg": "#FFFFEE",
+    "bg": "#4D4D4F"
+  },
+  "bgm": "bgm.mp3"
 }

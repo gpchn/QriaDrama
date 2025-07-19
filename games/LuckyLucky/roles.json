@@ -1,11 +1,10 @@
 {
-    "吉吉": {
-        "color": "blue"
-    },
-    "胖虎": {
-        "color": "orange"
-    },
-    "张小米": {
-        "color": "green"
-    }
+  "吉吉": {
+    "color": "skyblue",
+    "format": "【吉吉】{text}"
+  },
+  "胖虎": {
+    "color": "orange",
+    "format": "【胖虎】{text}"
+  }
 }
