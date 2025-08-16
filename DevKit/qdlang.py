@@ -40,7 +40,7 @@ def compile(code: str) -> dict:
             lines.append(line.replace("\\n", "\n"))
         else:
             parts = line.split(";;")
-            parts = ((part.strip().split(" ", 1)) for part in parts)
+            parts = ((part.strip().split("=", 1)) for part in parts)
             lines.append({part[0]: part[1].replace("\\n", "\n") for part in parts})
         logger.debug(lines[-1])
     return {"lines": lines}

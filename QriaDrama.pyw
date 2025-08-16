@@ -8,9 +8,13 @@ from tkinter import Tk, Label, Button
 from pygame import mixer
 from tkinter.messagebox import showinfo, showwarning, showerror
 import gui
+import builtin_libs
 
-GAME_PATH = Path(__file__).parent / "games"
+ROOT = Path(__file__).parent
+GAME_PATH = ROOT / "games"
+LIBS_PATH = ROOT / "libs"
 mixer.init()
+
 
 def main() -> None:
     # 搜索游戏
@@ -69,7 +73,7 @@ def load_game(name: str) -> None:
     metadata = loads(metadata_file.read_text(encoding="utf-8"))
     style = metadata.get("default-style") or {}
 
-    g = gui.GUI(metadata.get("name"), style)
+    g = gui.GUI(root, metadata.get("name"), style)
     i = Interpreter(root, metadata, g)
 
     if metadata.get("bgm"):
@@ -136,6 +140,19 @@ class Interpreter:
 
         self.output.write(text, color, delay)
 
+    def call_command(self, cmd: list):
+        cmd_name = cmd[0]
+        if lib := builtin_libs.funcs.get(cmd_name):
+            lib(cmd[1:], self)
+        elif not (LIBS_PATH / cmd_name).with_suffix(".py").exists():
+            showerror("错误", f"无法运行命令 {cmd_name}")
+            return
+        else:
+            exec(f"from libs import {cmd_name}")
+            lib = eval(f"{cmd_name}")
+            lib.main(cmd[1:])  # type: ignore
+            lib.callback(self)  # type: ignore
+
     # 解释下一行内容
     def next(self) -> bool:
         # 如果已经到达最后一行，则退出
@@ -144,10 +161,16 @@ class Interpreter:
             return False
         # 获取当前台词
         current_line = self.lines[self.line]
-        if type(current_line) == str:  # 如果是字符串，则直接输出
-            self.output.write(current_line, self.default_fg, self.default_delay)
-        elif type(current_line) == dict:  # 包含参数
-            self.parse_out(current_line)
+        match str(type(current_line)):
+            case "<class 'str'>":  # 如果是字符串，则直接输出
+                self.output.write(current_line, self.default_fg, self.default_delay)
+            case "<class 'dict'>":  # 包含参数输出
+                self.parse_out(current_line)
+            case "<class 'list'>":  # 指令
+                self.call_command(current_line)
+            case _:
+                showerror("QriaDrama", f"无法解析语句类型 {type(current_line)}")
+                return False
         # 更新行号
         self.line += 1
         return True

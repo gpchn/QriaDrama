@@ -8,7 +8,8 @@
   "index": "scripts/start.json",
   "roles": "roles.json",
   "default-style": {
-    "font": ["微软雅黑", 20],
+    "font": ["Roboto Mono", 20],
+    "font-path": "RobotoMono-Regular.ttf",
     "fg": "#FFFFEE",
     "bg": "#4D4D4F"
   },

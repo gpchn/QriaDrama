@@ -2,11 +2,41 @@
 # coding=utf-8
 
 import tkinter
-import tkinter.scrolledtext
 import tkinter.messagebox
-from time import sleep
-from css_colors import COLORS
+import tkinter.scrolledtext
 from re import match
+from time import sleep
+from pathlib import Path
+from css_colors import COLORS
+from os import name as OS_NAME, system
+
+
+def hex2rgb(hex_color: str) -> tuple[int, int, int]:
+    """
+    将十六进制颜色转换为 RGB 颜色
+
+    Args:
+        hex_color (str): 十六进制颜色
+
+    Returns:
+        tuple[int, int, int]: RGB 颜色
+    """
+    hex_color = hex_color.replace("fg_#", "").replace("bg_#", "").replace("#", "")
+    return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))  # type: ignore
+
+
+def rgb2hex(rgb: str) -> str:
+    """
+    将 RGB 颜色转换为十六进制颜色
+
+    Args:
+        rgb (str): RGB 颜色
+
+    Returns:
+        str: 十六进制颜色
+    """
+    r, g, b = rgb.replace("rgb(", "").replace(")", "").split(",")
+    return f"#{int(r):02x}{int(g):02x}{int(b):02x}"
 
 
 class GUI:
@@ -18,24 +48,33 @@ class GUI:
         default_style (dict): 默认样式
     """
 
-    def __init__(self, name:str, default_style: dict) -> None:
+    def __init__(self, GAME_PATH: Path, GAME_NAME: str, default_style: dict) -> None:
         font = default_style.get("font") or ("微软雅黑", 14)
+        font_path = default_style.get("font-path")
+        font_path = GAME_PATH / font_path if font_path else None
         fg = default_style.get("fg", "#000000")
         bg = default_style.get("bg", "#ffffff")
-        window_name = default_style.get("window_name", name)
+        window_name = default_style.get("window_name", GAME_NAME)
         window_size = default_style.get("window_size", "800x600")
-        icon = default_style.get("icon", "QriaDrama.ico")
+        window_width, window_height = map(int, window_size.split("x"))
+        icon = default_style.get("icon")
+        if icon:
+            icon = GAME_PATH / icon
+        else:
+            icon = "QriaDrama.ico"
 
+        # 创建窗口
         self.root = tkinter.Tk()
         self.root.title(window_name)  # 设置窗口标题
-        self.root.resizable(False, False)  # 设置窗口大小不可变
         self.root.geometry(window_size)  # 设置窗口大小
+        self.root.resizable(False, False)  # 设置窗口大小不可变
         self.root.iconbitmap(icon)  # 设置窗口图标
+
         # 绑定按键
-        self.root.bind("<Return>", self._next)  # 绑定回车键
         self.root.bind("<space>", self._next)  # 绑定空格键
         self.root.bind("<Escape>", self._exit)  # 绑定 ESC 键
         self.root.protocol("WM_DELETE_WINDOW", self._exit)  # 绑定关闭窗口
+
         # 设置窗口菜单
         menu = tkinter.Menu(self.root)
         self.root.config(menu=menu)
@@ -48,18 +87,45 @@ class GUI:
         menu_about.add_command(label="关于", command=self._menu_about)
         menu.add_cascade(label="关于", menu=menu_about)
 
-        # 设置文本框
-        self.st = tkinter.scrolledtext.ScrolledText(self.root, width=400, height=600)
+        # 创建输入框
+        self.entry = tkinter.Entry(self.root, font=font, justify="center")
+        # 创建文本框
+        self.st = tkinter.scrolledtext.ScrolledText(self.root)
+        # 计算颜色
         self.fg = self.handle_color(fg)
         self.bg = self.handle_color(bg)
+        self.dot_color = self.calc_dot_color()  # 根据前景色和背景色自动计算点的颜色
+        # 设置输入框
+        entry_height = self.entry.cget("height")
+        print(entry_height)
+        self.entry.place(
+            x=0, y=window_height - entry_height, width=window_width, height=entry_height
+        )
+        self.entry.bind("<Return>", self._enter)  # 绑定回车键
+        self.entry_text: str | None = None
+        self.entry.config(fg=self.dot_color, bg=self.bg)
+        # 设置文本框
         self.st.configure(font=font, bg=self.bg, fg=self.fg, state=tkinter.DISABLED)
-        self.st.pack()  # 放置文本框
+        self.st.place(x=0, y=0, width=window_width, height=window_height - entry_height)
         self.st.focus_set()  # 获取焦点
 
-        # 根据前景色和背景色自动计算点的颜色
-        self.calc_dot_color()
-        # 初始化允许输出下一行的标志
-        self.need_next: bool = False
+        self.handle_color(self.dot_color)  # 注册点颜色
+        self.need_next: bool = False  # 初始化允许输出下一行的标志
+
+        # 安装字体
+        font_installed = GAME_PATH / "font_installed"
+        if font_path and not font_installed.is_file():
+            tkinter.messagebox.showinfo("QriaDrama", f"请操作软件安装字体：{font_path}")
+            if OS_NAME == "nt":
+                system(f"start {font_path}")
+            elif OS_NAME == "posix" or OS_NAME == "darwin":
+                system(f"open {font_path}")
+            font_installed.touch()
+
+    # 获取输入
+    def _enter(self, _=None):
+        self.entry_text = self.entry.get() or None
+        self.entry.delete(0, tkinter.END)
 
     # 输出下一行
     def _next(self, _=None) -> None:
@@ -94,7 +160,7 @@ GitHub：https://github.com/gpchn/QriaDrama
 3. 按 ESC 键可以退出""",
         )
 
-    def calc_dot_color(self) -> None:
+    def calc_dot_color(self) -> str:
         """
         计算点的颜色，储存在 self.dot_color
 
@@ -104,16 +170,9 @@ GitHub：https://github.com/gpchn/QriaDrama
             bg (str): 背景色
         """
 
-        # 解析颜色为RGB值
-        def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
-            hex_color = (
-                hex_color.replace("fg_#", "").replace("bg_#", "").replace("#", "")
-            )
-            return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))  # type: ignore
-
         # 获取前景色和背景色的RGB值
-        fg_rgb = hex_to_rgb(self.fg)
-        bg_rgb = hex_to_rgb(self.bg)
+        fg_rgb = hex2rgb(self.fg)
+        bg_rgb = hex2rgb(self.bg)
 
         # 加权平均计算点的颜色（80%背景色，20%前景色）
         dot_r = int(bg_rgb[0] * 0.7 + fg_rgb[0] * 0.3)
@@ -121,8 +180,7 @@ GitHub：https://github.com/gpchn/QriaDrama
         dot_b = int(bg_rgb[2] * 0.7 + fg_rgb[2] * 0.3)
 
         # 转换为十六进制格式
-        self.dot_color = f"#{dot_r:02x}{dot_g:02x}{dot_b:02x}"
-        self.handle_color(self.dot_color)
+        return f"#{dot_r:02x}{dot_g:02x}{dot_b:02x}"
 
     def handle_color(self, color: str) -> str:
         """
@@ -134,11 +192,6 @@ GitHub：https://github.com/gpchn/QriaDrama
         Returns:
             str: 处理后的颜色（十六进制）
         """
-
-        # RGB 颜色转十六进制
-        def rgb2hex(rgb: str) -> str:
-            r, g, b = rgb.replace("rgb(", "").replace(")", "").split(",")
-            return f"#{int(r):02x}{int(g):02x}{int(b):02x}"
 
         # 十六进制
         if match(r"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", color) or match(
@@ -193,3 +246,5 @@ GitHub：https://github.com/gpchn/QriaDrama
     def mainloop(self) -> None:
         self.root.mainloop()
         self.root.destroy()
+
+    def get_input(self): ...
