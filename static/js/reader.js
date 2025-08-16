@@ -100,18 +100,10 @@ function displayCurrentLine() {
   // 移除现有的完成指示器
   $(".complete-indicator").remove();
 
-  // 检查是否需要清空对话框
-  if (
-    $dialogueText.length > 0 &&
-    $dialogueText[0].scrollHeight > $dialogueBox[0].clientHeight * 1.5
-  ) {
-    $dialogueText.empty();
-  }
+  // 永远不清空对话框内容，保留所有对话历史
+  // 仅确保自动滚动到最新内容
 
-  // 如果是第一行，确保对话框为空
-  if (currentLineIndex === 0) {
-    $dialogueText.empty();
-  }
+  // 即使是第一行也不清空对话框，保留所有历史对话内容
 
   // 添加新对话
   $dialogueText.append(dialogueElements.container);
