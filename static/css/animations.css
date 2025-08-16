@@ -1,88 +1,120 @@
-/* 开幕动画 */
+/**
+ * QriaDrama 动画效果样式
+ * 包含开幕、闭幕动画及相关元素的状态控制
+ */
+
+/* ==================== 开幕动画 ==================== */
+/**
+ * 开幕动画关键帧
+ * 从模糊、缩小、下移的状态渐变为清晰、正常大小、居中的状态
+ */
 @keyframes opening-curtain {
     0% {
-        opacity: 0;
-        transform: scale(0.8) translateY(30px);
-        filter: blur(10px);
+        opacity: 0; /* 完全透明 */
+        transform: scale(0.8) translateY(30px); /* 缩小并下移 */
+        filter: blur(10px); /* 高度模糊 */
     }
     70% {
-        opacity: 0.9;
-        transform: scale(1.02) translateY(-5px);
-        filter: blur(1px);
+        opacity: 0.9; /* 接近不透明 */
+        transform: scale(1.02) translateY(-5px); /* 略微放大并上移 */
+        filter: blur(1px); /* 轻微模糊 */
     }
     100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        filter: blur(0);
+        opacity: 1; /* 完全不透明 */
+        transform: scale(1) translateY(0); /* 恢复正常大小和位置 */
+        filter: blur(0); /* 完全清晰 */
     }
 }
 
-/* 开幕状态 */
+/**
+ * 开幕状态类
+ * 应用开幕动画，并设置初始状态
+ */
 .opening {
-    animation: opening-curtain 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    opacity: 0;
-    transform: scale(0.8) translateY(30px);
-    filter: blur(10px);
+    animation: opening-curtain 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* 使用弹性缓动函数 */
+    opacity: 0; /* 初始透明度 */
+    transform: scale(0.8) translateY(30px); /* 初始大小和位置 */
+    filter: blur(10px); /* 初始模糊度 */
 }
 
-/* 闭幕动画 */
+/* ==================== 闭幕动画 ==================== */
+/**
+ * 闭幕动画关键帧
+ * 从清晰、正常大小、居中的状态渐变为模糊、缩小、上移的状态
+ */
 @keyframes closing-curtain {
     0% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        filter: blur(0);
+        opacity: 1; /* 完全不透明 */
+        transform: scale(1) translateY(0); /* 正常大小和位置 */
+        filter: blur(0); /* 完全清晰 */
     }
     50% {
-        opacity: 0.7;
-        transform: scale(0.95) translateY(-10px);
-        filter: blur(3px);
+        opacity: 0.7; /* 半透明 */
+        transform: scale(0.95) translateY(-10px); /* 略微缩小并上移 */
+        filter: blur(3px); /* 中度模糊 */
     }
     100% {
-        opacity: 0;
-        transform: scale(0.8) translateY(-30px);
-        filter: blur(10px);
+        opacity: 0; /* 完全透明 */
+        transform: scale(0.8) translateY(-30px); /* 缩小并上移 */
+        filter: blur(10px); /* 高度模糊 */
     }
 }
 
-/* 闭幕状态 */
+/**
+ * 闭幕状态类
+ * 应用闭幕动画
+ */
 .closing {
-    animation: closing-curtain 1.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+    animation: closing-curtain 1.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; /* 使用弹性缓动函数 */
 }
 
-/* 闭幕后的状态 */
+/**
+ * 闭幕后的状态
+ * 动画完成后的最终状态
+ */
 .closed {
-    opacity: 0.2;
-    pointer-events: none;
+    opacity: 0.2; /* 低透明度 */
+    pointer-events: none; /* 禁用所有鼠标事件 */
 }
 
-/* 确保The End在闭幕状态下保持可见 */
+/* ==================== 特殊元素在闭幕状态下的处理 ==================== */
+/**
+ * 确保The End在闭幕状态下保持可见
+ */
 .closed #the-end {
-    opacity: 1 !important;
-    animation: none;
-    transform: translate(-50%, -50%);
+    opacity: 1 !important; /* 强制完全不透明 */
+    animation: none; /* 移除所有动画 */
+    transform: translate(-50%, -50%); /* 确保居中 */
 }
 
-/* 确保返回按钮在闭幕状态下保持可见 */
+/**
+ * 确保返回按钮在闭幕状态下保持可见
+ */
 .closed #back-button.keep-visible {
-    opacity: 1 !important;
-    pointer-events: auto !important;
+    opacity: 1 !important; /* 强制完全不透明 */
+    pointer-events: auto !important; /* 启用鼠标事件 */
 }
 
-/* 返回按钮在闭幕时保持可见 */
+/**
+ * 返回按钮在闭幕时保持可见
+ */
 #back-button.keep-visible {
-    opacity: 1 !important;
-    pointer-events: auto !important;
+    opacity: 1 !important; /* 强制完全不透明 */
+    pointer-events: auto !important; /* 启用鼠标事件 */
     z-index: 1001 !important; /* 确保在闭幕动画上层 */
 }
 
-/* 确保返回按钮在闭幕状态下保持可见 */
+/* 重复上述规则以确保优先级 */
 .closed #back-button.keep-visible {
     opacity: 1 !important;
     pointer-events: auto !important;
     z-index: 1001 !important; /* 确保在闭幕动画上层 */
 }
 
-/* The End 样式 */
+/* ==================== "The End" 元素样式和动画 ==================== */
+/**
+ * "The End" 元素基础样式
+ */
 #the-end {
     position: fixed;
     top: 50%;
@@ -90,29 +122,42 @@
     transform: translate(-50%, -50%);
     font-size: 4rem;
     font-weight: bold;
-    color: #FFDA79;
-    text-shadow: 0 0 15px rgba(255, 218, 121, 0.8), 0 0 25px rgba(76, 23, 64, 0.6);
-    opacity: 0;
-    z-index: 1000;
-    pointer-events: none;
+    color: #FFDA79; /* 金黄色 */
+    text-shadow: 0 0 15px rgba(255, 218, 121, 0.8), 0 0 25px rgba(76, 23, 64, 0.6); /* 发光效果 */
+    opacity: 0; /* 初始不可见 */
+    z-index: 1000; /* 确保在最上层 */
+    pointer-events: none; /* 禁用鼠标事件 */
     text-align: center;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.2em; /* 字符间距 */
 }
 
-/* 闭幕时显示The End */
-.closing ~ #the-end, 
+/**
+ * 闭幕时显示The End
+ * 使用兄弟选择器确保闭幕动画触发时The End淡入
+ */
+.closing ~ #the-end,
 .closing + #the-end {
     animation: the-end-fade-in 1.5s ease-in forwards;
 }
 
-/* The End淡入动画 */
+/**
+ * The End淡入动画
+ */
 @keyframes the-end-fade-in {
-    0% { opacity: 0; transform: translate(-50%, -40%); }
-    100% { opacity: 1; transform: translate(-50%, -50%); }
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -40%); /* 初始位置略高 */
+    }
+    100% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%); /* 最终居中位置 */
+    }
 }
 
-/* 确保The End在动画结束后保持可见 */
+/**
+ * 确保The End在动画结束后保持可见
+ */
 #the-end.visible {
-    opacity: 1 !important;
-    animation: none !important;
+    opacity: 1 !important; /* 强制完全不透明 */
+    animation: none !important; /* 移除所有动画 */
 }

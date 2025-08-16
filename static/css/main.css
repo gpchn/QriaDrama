@@ -1,60 +1,72 @@
+/**
+ * QriaDrama 剧本列表页面样式
+ */
+
+/* 基础页面样式 */
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 20px;
-  background-color: #1a0f17;
-  color: #e0e0e0;
+  background-color: #1a0f17; /* 深紫色背景 */
+  color: #e0e0e0; /* 浅灰色文本 */
 }
 
+/* 页面标题样式 */
 h1 {
-  color: #FFDA79;
+  color: #FFDA79; /* 金黄色标题 */
   text-align: center;
   font-weight: 600;
   margin-bottom: 30px;
   font-size: 2.5rem;
-  text-shadow: 0 0 10px rgba(255, 218, 121, 0.3);
+  text-shadow: 0 0 10px rgba(255, 218, 121, 0.3); /* 添加发光效果 */
 }
 
+/* 剧本列表容器样式 */
 #dramas-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
+/* 剧本列表标题样式 */
 h2 {
-  color: #FFDA79;
-  border-bottom: 2px solid #FFDA79;
+  color: #FFDA79; /* 与主标题一致的金黄色 */
+  border-bottom: 2px solid #FFDA79; /* 底部边框 */
   padding-bottom: 10px;
   margin-bottom: 25px;
   font-weight: 500;
 }
 
+/* 剧本网格布局 */
 #dramas-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 自适应网格列 */
+  grid-gap: 25px; /* 网格间距 */
 }
 
+/* 单个剧本卡片样式 */
 .drama-item {
   position: relative;
   height: 350px;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 10px 20px rgba(26, 15, 23, 0.5);
-  border: 1px solid rgba(255, 218, 121, 0.3);
-  background-color: #2a1f29;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 平滑过渡效果 */
+  box-shadow: 0 10px 20px rgba(26, 15, 23, 0.5); /* 卡片阴影 */
+  border: 1px solid rgba(255, 218, 121, 0.3); /* 淡金色边框 */
+  background-color: #2a1f29; /* 卡片背景色 */
   background-size: cover;
   background-position: center;
 }
 
+/* 剧本卡片悬停效果 */
 .drama-item:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(255, 218, 121, 0.4);
-  border-color: rgba(255, 218, 121, 0.6);
+  transform: translateY(-10px) scale(1.02); /* 上移并轻微放大 */
+  box-shadow: 0 15px 30px rgba(255, 218, 121, 0.4); /* 增强阴影 */
+  border-color: rgba(255, 218, 121, 0.6); /* 加深边框颜色 */
 }
 
+/* 剧本卡片渐变遮罩层 */
 .drama-item::before {
   content: "";
   position: absolute;
@@ -64,32 +76,35 @@ h2 {
   height: 100%;
   background: linear-gradient(
     to top,
-    rgba(26, 15, 23, 0.8) 0%,
-    rgba(26, 15, 23, 0.5) 50%,
-    rgba(26, 15, 23, 0.2) 100%
+    rgba(26, 15, 23, 0.8) 0%, /* 底部深色遮罩 */
+    rgba(26, 15, 23, 0.5) 50%, /* 中部半透明遮罩 */
+    rgba(26, 15, 23, 0.2) 100% /* 顶部淡色遮罩 */
   );
   z-index: 1;
 }
 
+/* 剧本标题容器 */
 .drama-title-container {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   padding: 20px;
-  z-index: 2;
+  z-index: 2; /* 确保在遮罩层之上 */
   box-sizing: border-box;
 }
 
+/* 剧本标题样式 */
 .drama-title {
   margin: 0;
-  color: #FFDA79;
+  color: #FFDA79; /* 金黄色标题 */
   font-size: 1.5rem;
   font-weight: 600;
-  text-shadow: 0 2px 4px rgba(26, 15, 23, 0.8);
+  text-shadow: 0 2px 4px rgba(26, 15, 23, 0.8); /* 文字阴影增强可读性 */
   line-height: 1.2;
 }
 
+/* 剧本内容容器（用于显示描述） */
 .drama-content-container {
   position: absolute;
   top: 0;
@@ -98,65 +113,79 @@ h2 {
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
-  z-index: 2;
+  z-index: 2; /* 确保在遮罩层之上 */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  background: rgba(26, 15, 23, 0.7);
+  opacity: 0; /* 默认隐藏 */
+  transition: opacity 0.3s ease; /* 淡入淡出效果 */
+  background: rgba(26, 15, 23, 0.7); /* 半透明背景 */
   color: #e0e0e0;
   overflow: hidden;
 }
 
+/* 悬停时显示剧本内容 */
 .drama-item:hover .drama-content-container {
   opacity: 1;
 }
 
+/* 剧本描述样式 */
 .drama-description {
   margin: 0;
   padding: 10px;
-  background: rgba(255, 218, 121, 0.1);
-  border: 1px solid rgba(255, 218, 121, 0.2);
+  background: rgba(255, 218, 121, 0.1); /* 淡金色背景 */
+  border: 1px solid rgba(255, 218, 121, 0.2); /* 淡金色边框 */
   border-radius: 8px;
-  -webkit-backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); /* 背景模糊效果 */
   backdrop-filter: blur(5px);
   font-size: 0.9rem;
   line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 5;
+  -webkit-line-clamp: 5; /* 限制显示5行 */
   line-clamp: 5;
   -webkit-box-orient: vertical;
 }
 
-/* 响应式布局调整 */
+/* 无剧本消息样式 */
+.no-dramas-message {
+  text-align: center;
+  padding: 30px;
+  color: #FFDA79;
+  font-size: 1.2rem;
+  background-color: rgba(42, 31, 41, 0.7);
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+/* 响应式布局调整 - 平板设备 */
 @media (max-width: 768px) {
   #dramas-list {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 调整网格大小 */
+    grid-gap: 20px; /* 减小间距 */
   }
 
   .drama-item {
-    height: 300px;
+    height: 300px; /* 调整卡片高度 */
   }
 
   .drama-title {
-    font-size: 1.3rem;
+    font-size: 1.3rem; /* 调整标题大小 */
   }
 }
 
+/* 响应式布局调整 - 手机设备 */
 @media (max-width: 480px) {
   #dramas-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 单列布局 */
   }
 
   .drama-item {
-    height: 280px;
+    height: 280px; /* 进一步调整卡片高度 */
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 2rem; /* 调整主标题大小 */
   }
 }
