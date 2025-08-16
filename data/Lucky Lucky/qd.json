@@ -1,0 +1,11 @@
+{
+  "title": "Lucky Lucky",
+  "cover": "cover.jpg",
+  "roles": {
+    "": "color: white;",
+    "Lucky": "color: red;",
+    "Panghu": "color: orange;",
+    "Xiaomin": "color: green;"
+  },
+  "index": "index.json"
+}

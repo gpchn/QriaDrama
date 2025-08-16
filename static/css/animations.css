@@ -1,0 +1,118 @@
+/* 开幕动画 */
+@keyframes opening-curtain {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+        filter: blur(10px);
+    }
+    70% {
+        opacity: 0.9;
+        transform: scale(1.02) translateY(-5px);
+        filter: blur(1px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* 开幕状态 */
+.opening {
+    animation: opening-curtain 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    opacity: 0;
+    transform: scale(0.8) translateY(30px);
+    filter: blur(10px);
+}
+
+/* 闭幕动画 */
+@keyframes closing-curtain {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(0.95) translateY(-10px);
+        filter: blur(3px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-30px);
+        filter: blur(10px);
+    }
+}
+
+/* 闭幕状态 */
+.closing {
+    animation: closing-curtain 1.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+}
+
+/* 闭幕后的状态 */
+.closed {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+/* 确保The End在闭幕状态下保持可见 */
+.closed #the-end {
+    opacity: 1 !important;
+    animation: none;
+    transform: translate(-50%, -50%);
+}
+
+/* 确保返回按钮在闭幕状态下保持可见 */
+.closed #back-button.keep-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* 返回按钮在闭幕时保持可见 */
+#back-button.keep-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 1001 !important; /* 确保在闭幕动画上层 */
+}
+
+/* 确保返回按钮在闭幕状态下保持可见 */
+.closed #back-button.keep-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 1001 !important; /* 确保在闭幕动画上层 */
+}
+
+/* The End 样式 */
+#the-end {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    font-weight: bold;
+    color: #FFDA79;
+    text-shadow: 0 0 15px rgba(255, 218, 121, 0.8), 0 0 25px rgba(76, 23, 64, 0.6);
+    opacity: 0;
+    z-index: 1000;
+    pointer-events: none;
+    text-align: center;
+    letter-spacing: 0.2em;
+}
+
+/* 闭幕时显示The End */
+.closing ~ #the-end, 
+.closing + #the-end {
+    animation: the-end-fade-in 1.5s ease-in forwards;
+}
+
+/* The End淡入动画 */
+@keyframes the-end-fade-in {
+    0% { opacity: 0; transform: translate(-50%, -40%); }
+    100% { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* 确保The End在动画结束后保持可见 */
+#the-end.visible {
+    opacity: 1 !important;
+    animation: none !important;
+}
