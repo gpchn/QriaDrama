@@ -68,7 +68,4 @@ class API:
         lines = json.loads(file.read_text("utf-8"))
         logger.info(f"获取了 {title} 的台词和元数据")
         logger.debug(f"返回值：{meta=}, {lines=}")
-        return {
-            "meta": meta,
-            "lines": lines
-        }
+        return {"meta": meta, "lines": lines}

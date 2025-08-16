@@ -1,47 +1,43 @@
-
-/* ==================== 结束页面返回按钮样式 ==================== */
+/* 结束页面返回按钮样式 */
 #end-back-button {
-    position: fixed;
-    top: 60%; /* 位于The End下方 */
-    left: 50%;
-    transform: translateX(-50%); /* 水平居中 */
-    padding: 12px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #1a0f17; /* 深紫色文本，与背景形成对比 */
-    background-color: #FFDA79; /* 金黄色背景 */
-    border: none;
-    border-radius: 30px; /* 圆角按钮 */
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255, 218, 121, 0.4); /* 阴影效果 */
-    transition: all 0.3s ease; /* 平滑过渡效果 */
-    opacity: 0; /* 初始不可见 */
-    z-index: 1001; /* 确保在上层 */
-    outline: none; /* 移除焦点轮廓 */
-    margin-top: 20px; /* 与The End的间距 */
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1a0f17;
+  background-color: #ffda79;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 218, 121, 0.4);
+  transition: all 0.3s ease;
+  opacity: 0;
+  z-index: 1001;
+  outline: none;
+  margin-top: 20px;
 }
 
-/* 返回按钮悬停效果 */
 #end-back-button:hover {
-    background-color: #FFE4A1; /* 悬停时背景变亮 */
-    transform: translateX(-50%) scale(1.05); /* 略微放大 */
-    box-shadow: 0 6px 20px rgba(255, 218, 121, 0.6); /* 增强阴影效果 */
+  background-color: #ffe4a1;
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 218, 121, 0.6);
 }
 
-/* 返回按钮可见状态 */
 #end-back-button.visible {
-    opacity: 1; /* 完全不透明 */
-    animation: button-fade-in 0.8s ease-out forwards; /* 淡入动画 */
+  opacity: 1;
+  animation: button-fade-in 0.8s ease-out forwards;
 }
 
-/* 返回按钮淡入动画 */
 @keyframes button-fade-in {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
